@@ -214,51 +214,89 @@ private:
         else return _search(root->left, value);
     }
     void _insert(Node* node, Node* insertedNode) {
-        if (node->value > insertedNode->value) {
-            if (!node->left) {
-                node->left = insertedNode;
-                if (!node->right)height++;
+        if (node->value != insertedNode->value) {
+            if (node->value > insertedNode->value) {
+                if (!node->left) {
+                    node->left = insertedNode;
+                    if (!node->right)height++;
+                }
+                else {
+                    this->_insert(node->left, insertedNode);
+                }
             }
-            else {
-                this->_insert(node->left, insertedNode);
+            else if (node->value < insertedNode->value) {
+                if (!node->right) {
+                    node->right = insertedNode;
+                    if (!node->left)height++;
+                }
+                else {
+                    this->_insert(node->right, insertedNode);
+                }
             }
         }
-        else if (node->value < insertedNode->value) {
-            if (!node->right) {
-                node->right = insertedNode;
-                if (!node->left)height++;
-            }
-            else {
-                this->_insert(node->right, insertedNode);
-            }
-        }
+        
     }
     void _delete(Node* node, int value) {
         if (!node)return;
-        //if (node->value == value) {
-        //    if (!node->right && !node->left) {
-        //        delete node;
-        //    }
-        //    /*else if (node->right && !node->left) {
-        //        node = node->right;
-        //        delete node->right;
-        //    }
-        //    else if (!node->right && node->left) {
-        //        node = node->left;
-        //        delete node->left;
-        //    }
-        //    else {
-        //        Node* nodeWithMinValueinRightSubtree = _findMinNodeInRightSubtree();
-        //        node->value = nodeWithMinValueinRightSubtree->value;
-        //        delete nodeWithMinValueinRightSubtree;
-        //        nodeWithMinValueinRightSubtree = nullptr;
-        //    }*/
-        //}
-        //else {
-        //    _delete(node->left, value);
-        //    _delete(node->right, value);
+        
+        //proccess case with one left child:
+        if (node->left && !node->right && node->left->value == value) {
+            /*
+            *  Delete node with value 1:
+            *               3
+            *              / \
+            *             2   null
+            *            /
+            *           1
+            */
+            if (node->left->left) {
+                Node* temp = node->left->left;
+                delete node->left;
+                node->left = temp;
+            }
+            /*
+            *  Delete node with value 1:
+            *               2
+            *              / \
+            *             1   null
+            */
+            else {
+                delete node->left;
+                node->left = nullptr;
+            }
+        }
+        //proccess case with one right child:
+        else if (node->right && !node->left && node->right->value == value) {
+            /*
+            *  proccess case when:
+            *  Delete node with value 5:
+            *               1
+            *              / \
+            *          null   4
+            *                  \
+            *                   5
+            */
+            if (node->right->right) {
+                Node* temp = node->right->right;
+                delete node->right;
+                node->right = temp;
+            }
+            /*
+            *  proccess case when:
+            *  Delete node with value 4:
+            *               2
+            *              / \
+            *          null   4
+            */
+            else {
+                delete node->right;
+                node->right = nullptr;
+            }
+        }
+        //proccess case with two children:
+        else {
 
-        //}
+        }
     }
     
     Node* _findMinNodeInRightSubtree() {
