@@ -1,0 +1,298 @@
+﻿#include <iostream>
+#include <vector>
+#include <numeric>
+#include <string>
+#include <windows.h>
+#include <utility>
+#include <thread>
+
+//default implementation of tree node
+class Node {
+public:
+    int value;
+    Node* left =nullptr;
+    Node* right = nullptr;
+    
+    void display() {
+        std::cout << value;
+    }
+    Node(int v) {
+        value = v;
+    }
+};
+
+// class for draw something
+class DrawWorker {
+public:
+    COORD coord;
+    void drawLine(int x_start,int x_end,int y,char lineSign) {
+        // this function drawing line wich will parallel with OX and have height Y above OX
+        /*
+        *                   ^ OY
+        *                   |
+        *                   |
+        *                (y)|     ___________________________
+        *                   |
+        *                   |
+        *                   |-----|-------------------------|----->
+        *                   |   x_start                    x_end  OX
+        *                   |
+        */
+        this->setCursorPosition(x_start, y);
+        while (this->coord.X < x_end) {
+            std::cout << lineSign;
+            this->coord.X++;
+        }
+    }
+    void setCursorPosition(int x, int y) {
+        // set specific postion for cursor into console
+        /*
+        *                   ^ OY
+        *                   |
+        *                   |
+        *                (y)|     *
+        *                   |
+        *                   |
+        *                   |-----|------------------------------>
+        *                   |    (x)                             OX
+        *                   |
+        */
+        this->coord.X = x;
+        this->coord.Y = y;
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), this->coord);
+    }
+    void displayBinaryTree(Node* root, int y = 0, int startScreenBlock = 0, int middleScreenBlockPosition = 60, int endScreenBlock = 120) {
+        /*
+        * this function will display your tree by this algorithm:
+        * 1) Each node has WIDTH = 3px and HEIGHT = 2px;
+        * 
+        * 2) Depend on the screen width ,the space is devided into sectors where the number of sectors = AMOUNT_OF_ELEMENTS_ON_TREE_LEVEL + 1;
+        *    2.1) if width is even, the value was printed in first sector, which was equals 59px instead 60px;
+        * 
+        3) Eache element's value will written in the middle of its own sector;
+        * 
+        * 4) Before and After each value, the sign "|" is printed;
+        *    However, if a node on the bottom level of tree and its left and right children are bouth nullptr, nothing is printed;
+        *
+        * 5) Each node connected to each other using a line, calculated as follows:
+        *    1) for left line: start = (startScreenBlock + middleScreenBlockPosition ) / 2, end = middleScreenBlockPosition;
+        *    2) for right line start = middleScreenBlockPosition + 1, end = (middleScreenBlockPosition + endScreenBlock) / 2;
+        *
+        *
+        * 7) For the next level will sectors will divided by next rules:
+        *   7.1) for left subtree: start = startScreenBlock, middle = (startScreenBlock + middleScreenBlockPosition) / 2, end = middleScreenBlockPosition;
+        *   7.2) for right subtree: start = middleScreenBlockPosition, middle = (middleScreenBlockPosition + endScreenBlock) / 2, end = endScreenBlock;
+        * 
+        * 6) Nodes with value NULL are not printed;
+        *
+        * 
+        * Example:
+        *   Screen width = 120px;
+        *   Values for tree: 5,2,6,8,4,13;
+        *   
+        *   startScreenBlock = 0px, middleScreenBlockPosition = 60px, endScreenBlock = 120px
+        * 
+        *      NOTE: in the specified limit for the next sector and in parentheses, the length of the string
+        *                                           |
+        *                              sector(0,60) 5 sector(60,120)
+        *                       _______30(30)_______|_______90(30)_______
+        *                       |                                       |
+        *          sector(0,30) 2 sector(30,60)           sector(60,90) 6 sector(90,120)  
+        *           ___15(15)___|___45(15)___               ___75(15)___|___105(15)___
+        *                                   |                                         |
+        *                                   4                           sector(60,75) 8 sector(105,120)  
+        *                                                                  ___67(8)___|___112(7)___      <----- this option is a sector that is not divided into two
+        *                                                                                         |              and which is why graph is printed with a collision
+        *                                                                                         13
+        */  
+        //check if node is nullptr
+        if (!root)return;
+        // draw values of root like that:
+        /*
+        *   |
+        * value
+        *   |
+        */
+        std::string rootValue = !root ? "NULL" : std::to_string(root->value);
+        setCursorPosition(middleScreenBlockPosition, y);
+        std::cout << "|";
+        y++;
+        setCursorPosition(middleScreenBlockPosition, y);
+        std::cout << rootValue;
+        y++;
+        // check if root have left or right node
+        if (root->left || root->right) {
+            // draw lines for branches
+            /*
+            *                 |
+            *               value
+            *    -------------|--------------
+            */
+            setCursorPosition(middleScreenBlockPosition, y);
+            std::cout << "|";
+            drawLine((startScreenBlock + middleScreenBlockPosition) / 2, middleScreenBlockPosition, y, '_');
+            drawLine(middleScreenBlockPosition + 1, (middleScreenBlockPosition + endScreenBlock) / 2, y, '_');
+            y++;
+        }
+        // draw next nodes
+        displayBinaryTree(root->left, y, startScreenBlock, (startScreenBlock + middleScreenBlockPosition) / 2, middleScreenBlockPosition);
+        displayBinaryTree(root->right, y, middleScreenBlockPosition, (middleScreenBlockPosition + endScreenBlock) / 2, endScreenBlock);
+    }
+
+
+};
+class BinarySearchTree {
+public:
+    // create empty root object
+    Node* root{};
+    // initialize height of tree
+    int height = 1;
+
+    BinarySearchTree(std::vector<int>* values) {
+        this->createTree(values);
+    }
+    void createTree(std::vector<int>* values){
+        this->root = new Node((*values)[0]);
+        int i = 1;
+        std::size_t size = (*values).size();
+        while (i < size) {
+            this->_insert(this->root, new Node((*values)[i]));
+            i++;
+        }
+        this->root = root;
+    }
+    void insertNode(int value) {
+        this->_insert(this->root, new Node(value));
+    }
+    void preorder_traversal() {
+        // see https://neon1ks.github.io/c/22/2208.htm
+        _preorder_traversal(this->root);
+    }
+    
+    void postorder_traversal() {
+        // see https://neon1ks.github.io/c/22/2208.htm
+        _postorder_traversal(this->root);
+    }
+    void inorder_traversal() {
+        // see https://neon1ks.github.io/c/22/2208.htm
+        _inorder_traversal(this->root);
+    }
+    void search(int value) {
+        std::string answer = _search(this->root, value)?"Founded":"Not founded";
+        std::cout << answer;
+    }
+    void deleteNode(int value) {
+        _delete(this->root, value);
+    }
+private:
+    void _postorder_traversal(Node* root) {
+        // see https://neon1ks.github.io/c/22/2208.htm
+        if (!root)return;
+        _postorder_traversal(root->left);
+        _postorder_traversal(root->right);
+        std::cout << root->value << "\n";
+    }
+    void _preorder_traversal(Node* root) {
+        // see https://neon1ks.github.io/c/22/2208.htm
+        if (!root)return;
+        std::cout << root->value << "\n";
+        _preorder_traversal(root->left);
+        _preorder_traversal(root->right);
+
+    }
+    void _inorder_traversal(Node* root) {
+        // see https://neon1ks.github.io/c/22/2208.htm
+        if (!root)return;
+        _inorder_traversal(root->left);
+        std::cout << root->value << "\n";
+        _inorder_traversal(root->right);
+    }
+    bool _search(Node*root,int value) {
+        if (!root)return false;
+        else if (value == root->value)return true;
+        else if (value > root->value) return _search(root->right, value);
+        else return _search(root->left, value);
+    }
+    void _insert(Node* node, Node* insertedNode) {
+        if (node->value > insertedNode->value) {
+            if (!node->left) {
+                node->left = insertedNode;
+                if (!node->right)height++;
+            }
+            else {
+                this->_insert(node->left, insertedNode);
+            }
+        }
+        else if (node->value < insertedNode->value) {
+            if (!node->right) {
+                node->right = insertedNode;
+                if (!node->left)height++;
+            }
+            else {
+                this->_insert(node->right, insertedNode);
+            }
+        }
+    }
+    void _delete(Node* node, int value) {
+        if (!node)return;
+        //if (node->value == value) {
+        //    if (!node->right && !node->left) {
+        //        delete node;
+        //    }
+        //    /*else if (node->right && !node->left) {
+        //        node = node->right;
+        //        delete node->right;
+        //    }
+        //    else if (!node->right && node->left) {
+        //        node = node->left;
+        //        delete node->left;
+        //    }
+        //    else {
+        //        Node* nodeWithMinValueinRightSubtree = _findMinNodeInRightSubtree();
+        //        node->value = nodeWithMinValueinRightSubtree->value;
+        //        delete nodeWithMinValueinRightSubtree;
+        //        nodeWithMinValueinRightSubtree = nullptr;
+        //    }*/
+        //}
+        //else {
+        //    _delete(node->left, value);
+        //    _delete(node->right, value);
+
+        //}
+    }
+    
+    Node* _findMinNodeInRightSubtree() {
+        return _findMinNode(this->root->right, new Node(INT_MAX));
+    }
+    Node* _findMinNode(Node*node, Node* minNode) {
+        if (!node) return minNode;
+        if (node->value < minNode->value) {
+            minNode = node;
+        }
+        Node* leftMinNodeOfRightSubtree = _findMinNode(node->left, minNode);
+        return leftMinNodeOfRightSubtree;
+
+    }
+    
+};
+int main()
+{
+    std::vector<int>* v = new std::vector<int>{ 54,50,85,3,10,59,2,82,66,42,9,78,22,57,92 };
+    BinarySearchTree* t = new BinarySearchTree(v);
+    DrawWorker* d = new DrawWorker();
+    t->deleteNode(2);
+    //t->search(2376);
+    //t->insertNode(100);
+
+    d->displayBinaryTree(t->root);
+    //t->findMinValueInRightSubTree();
+
+    while (true);
+    /*HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD mode;
+    GetConsoleMode(hIn, &mode);
+    SetConsoleMode(hIn, mode | ENABLE_WINDOW_INPUT);
+
+    INPUT_RECORD record;
+    DWORD eventsRead;*/
+}
