@@ -1,10 +1,7 @@
 ﻿#include <iostream>
 #include <vector>
-#include <numeric>
 #include <string>
 #include <windows.h>
-#include <utility>
-#include <thread>
 
 //default implementation of tree node
 class Node {
@@ -186,9 +183,15 @@ public:
         _delete(this->root, value);
         
     }
+    void calculateProductElementsOfTree() {
+        float result = 1;
+        _calculateProductElementsOfTree(this->root, &result);
+        std::cout << result;
+    }
 private:
     void _postorder_traversal(Node* root) {
         // see https://neon1ks.github.io/c/22/2208.htm
+        // Симметричный
         if (!root)return;
         _postorder_traversal(root->left);
         _postorder_traversal(root->right);
@@ -196,6 +199,7 @@ private:
     }
     void _preorder_traversal(Node* root) {
         // see https://neon1ks.github.io/c/22/2208.htm
+        // Прямой
         if (!root)return;
         std::cout << root->value << "\n";
         _preorder_traversal(root->left);
@@ -204,6 +208,7 @@ private:
     }
     void _inorder_traversal(Node* root) {
         // see https://neon1ks.github.io/c/22/2208.htm
+        // Обратный
         if (!root)return;
         _inorder_traversal(root->left);
         std::cout << root->value << "\n";
@@ -341,7 +346,7 @@ private:
         else if (node->right && node->right->value == value && (!node->right->left && !node->right->right)) {
             _delete_node_without_children(node, node->right);
         }
-        else if (node->value == value && ((node->right && !node->left)|| node->left && !node->right)) {
+        else if (node->value == value && ((node->right && !node->left) || node->left && !node->right)) {
             _delete_node_with_one_child(node);
         }
         else if (node->value == value && node->right && node->left) {
@@ -370,19 +375,18 @@ private:
         }
         int _minNode = _findMinValueInTree(node->left, minValue);
         return _minNode;
-
     }
-    
+    void _calculateProductElementsOfTree(Node* root,float* product) {
+        if (!root)return;
+        *product*= root->value;
+        _calculateProductElementsOfTree(root->left,product);
+        _calculateProductElementsOfTree(root->right,product);
+        
+    }
 };
 int main()
-{
+{   
     std::vector<int>* v = new std::vector<int>{ 54,50,85,3,10,59,2,82,66,42,9,78,22,57,92 };
     BinarySearchTree* t = new BinarySearchTree(v);
-    DrawWorker* d = new DrawWorker();
-    t->deleteNode(2);
-    t->deleteNode(42);
-    t->deleteNode(85);
-    t->deleteNode(54);
-    d->displayBinaryTree(t->root);
-    while (true);
+    
 }
