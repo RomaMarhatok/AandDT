@@ -120,6 +120,8 @@ public:
         setCursorPosition(middleScreenBlockPosition, y);
         std::cout << rootValue;
         y++;
+        setCursorPosition(middleScreenBlockPosition, y);
+        std::cout << "|";
         // check if root have left or right node
         if (root->left || root->right) {
             // draw lines for branches
@@ -128,8 +130,7 @@ public:
             *               value
             *    -------------|--------------
             */
-            setCursorPosition(middleScreenBlockPosition, y);
-            std::cout << "|";
+            
             drawLine((startScreenBlock + middleScreenBlockPosition) / 2, middleScreenBlockPosition, y, '_');
             drawLine(middleScreenBlockPosition + 1, (middleScreenBlockPosition + endScreenBlock) / 2, y, '_');
             y++;
@@ -183,6 +184,7 @@ public:
     }
     void deleteNode(int value) {
         _delete(this->root, value);
+        
     }
 private:
     void _postorder_traversal(Node* root) {
@@ -236,79 +238,138 @@ private:
         }
         
     }
-    void _delete(Node* node, int value) {
-        if (!node)return;
-        
-        //proccess case with one left child:
-        if (node->left && !node->right && node->left->value == value) {
-            /*
-            *  Delete node with value 1:
-            *               3
-            *              / \
-            *             2   null
-            *            /
-            *           1
-            */
-            if (node->left->left) {
-                Node* temp = node->left->left;
-                delete node->left;
-                node->left = temp;
-            }
-            /*
-            *  Delete node with value 1:
-            *               2
-            *              / \
-            *             1   null
-            */
-            else {
-                delete node->left;
-                node->left = nullptr;
-            }
-        }
-        //proccess case with one right child:
-        else if (node->right && !node->left && node->right->value == value) {
-            /*
-            *  proccess case when:
-            *  Delete node with value 5:
-            *               1
-            *              / \
-            *          null   4
-            *                  \
-            *                   5
-            */
-            if (node->right->right) {
-                Node* temp = node->right->right;
-                delete node->right;
-                node->right = temp;
-            }
-            /*
-            *  proccess case when:
-            *  Delete node with value 4:
-            *               2
-            *              / \
-            *          null   4
-            */
-            else {
-                delete node->right;
-                node->right = nullptr;
-            }
-        }
-        //proccess case with two children:
-        else {
+
+    void _delete_node_without_children(Node* parentNode, Node* deletedNode) {
+        /*
+        *  proccess node without children:
+        *  Delete node with value 1:
+        * 
+        *  1)    parentNode -> 2
+        *                     / \
+        *   deletedNode ->   1   null
+        * 
+        *  2)               2                   2
+        *                  / \        ->       / \
+        *     delete ->   1   null          null  null
+        */
+        if (parentNode->value > deletedNode->value) parentNode->left = nullptr;
+        else parentNode->right = nullptr;
+        delete deletedNode;
+    }
+    void _delete_node_with_one_child(Node* parentNode) {
+        /*
+        *  proccess node with one child(left or right):
+        *  Delete node with value 4:
+        * 
+        *  1)           1
+        *              / \
+        *          null   4 <- parentNode
+        *                  \
+        *                   5
+        * 
+        *  2)           1
+        *              / \
+        *          null   5
+        *                  \
+        *                   5 
+        *  3)           1
+        *              / \
+        *          null   5
+        *                  \
+        *                   null
+        */
+        if (parentNode->left && !parentNode->right) {
+            parentNode->value = parentNode->left->value;
+            delete parentNode->left;
+            parentNode->left = nullptr;
 
         }
-    }
-    
-    Node* _findMinNodeInRightSubtree() {
-        return _findMinNode(this->root->right, new Node(INT_MAX));
-    }
-    Node* _findMinNode(Node*node, Node* minNode) {
-        if (!node) return minNode;
-        if (node->value < minNode->value) {
-            minNode = node;
+        else if (parentNode->right && !parentNode->left) {
+            parentNode->value = parentNode->right->value;
+            delete parentNode->right;
+            parentNode->right = nullptr;
         }
-        Node* leftMinNodeOfRightSubtree = _findMinNode(node->left, minNode);
-        return leftMinNodeOfRightSubtree;
+    }
+    void _delete_node_with_two_children(Node* deletedNode) {
+        /* 
+        * proccess node with two children:
+        * for more info see https://www.techiedelight.com/deletion-from-bst/
+        * Delete node with value 40:
+        * Example:
+        *           35
+        *          /  \
+        *        12    60
+        *             /  \
+        *           40   null
+        *          /  \
+        *        39    58
+        *             /  \
+        *           57    59
+        * 
+        * 
+        *  1)       35
+        *          /  \
+        *        12    60
+        *             /  \
+        *           40   null
+        *          /  \
+        *        39    58 <- _findMinNode will return this node
+        *             /  \
+        *     min-> 57    59
+        * 
+        * 
+        *  2)       35                              35
+        *          /  \                            /  \
+        *         12   60                        12   60 
+        *             /  \                           /  \
+        * assign -> 40   null         ->            57  null
+        *          /  \                            /  \
+        *        39    58                         39  58
+        *             /  \                           /  \
+        *   delete-> 57   59                      null   59
+        */
+        int minValue = _findMinValueInTree(deletedNode->right);
+        Node* parentNodeWithMinValue = _findParentNodeByValue(this->root, minValue);
+        _delete(parentNodeWithMinValue, minValue);
+        deletedNode->value = minValue;        
+    }
+    void _delete(Node* node, int value) {
+        if (!node)return;
+        else if (node->left && node->left->value == value && (!node->left->left && !node->left->right)) {
+            _delete_node_without_children(node, node->left);
+        }
+        else if (node->right && node->right->value == value && (!node->right->left && !node->right->right)) {
+            _delete_node_without_children(node, node->right);
+        }
+        else if (node->value == value && ((node->right && !node->left)|| node->left && !node->right)) {
+            _delete_node_with_one_child(node);
+        }
+        else if (node->value == value && node->right && node->left) {
+            _delete_node_with_two_children(node);
+        }
+        else {
+            if (node->value > value) _delete(node->left, value);
+            else _delete(node->right, value);
+        }
+    }
+    Node* _findParentNodeByValue(Node* node,int childValue) {
+        // return parent node by childValue
+        if (!node) return nullptr;
+        
+        if ((node->left && node->left->value == childValue) || (node->right && node->right->value == childValue)) return node;
+        
+        if (node->value > childValue) return _findParentNodeByValue(node->left, childValue);
+        else return _findParentNodeByValue(node->right, childValue);
+    }
+    int _findMinValueInTree(Node*node,int minValue = INT_MAX) {
+        // returns a node whose child elements have a minimum value
+        if (!node) return minValue;
+        
+        if (node->value < minValue) {
+            minValue = node->value;
+        }
+        int _minNode = _findMinValueInTree(node->left, minValue);
+        return _minNode;
 
     }
     
@@ -319,18 +380,9 @@ int main()
     BinarySearchTree* t = new BinarySearchTree(v);
     DrawWorker* d = new DrawWorker();
     t->deleteNode(2);
-    //t->search(2376);
-    //t->insertNode(100);
-
+    t->deleteNode(42);
+    t->deleteNode(85);
+    t->deleteNode(54);
     d->displayBinaryTree(t->root);
-    //t->findMinValueInRightSubTree();
-
     while (true);
-    /*HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
-    DWORD mode;
-    GetConsoleMode(hIn, &mode);
-    SetConsoleMode(hIn, mode | ENABLE_WINDOW_INPUT);
-
-    INPUT_RECORD record;
-    DWORD eventsRead;*/
 }
