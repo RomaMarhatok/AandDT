@@ -263,3 +263,6 @@ void BinarySearchTree::_deleteTree(Node*node) {
     _deleteTree(node->right);
     delete node;
 }
+void _dijkstrasAlgorithm(int vertex) {
+
+}

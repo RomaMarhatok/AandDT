@@ -2,6 +2,10 @@
 #include "BST.h"
 #include "DirectedGraph.h"
 #include "algorithm"
+#include "queue"
+#include "utility"
+
+
 // class for draw something
 class DrawWorker {
 public:
@@ -65,7 +69,8 @@ public:
         this->coord.Y = y;
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), this->coord);
     }
-    void drawLineUnderDegree(int start_x, int start_y, int lineLength, int degree, char lineSign) {
+    template<typename T>
+    void drawLineUnderDegree(int start_x, int start_y, int lineLength, int degree, T lineSign) {
         /*
         * This function will drawing line under degree:
         * x = x0+l*cos(degree)
@@ -84,7 +89,7 @@ public:
         *                   |
         *
         */
-        int x_end = static_cast<int>(start_x + lineLength * std::cos(degree));
+        int x_end = static_cast<int>(start_x/ + lineLength * std::cos(degree));
         int y_end = static_cast<int>(start_y + lineLength * std::sin(degree));
         if (x_end < 0) start_x *= -1;
         if (y_end < 0) start_y *= -1;
@@ -186,47 +191,19 @@ private:
         displayBinaryTree(root->left, y, startScreenBlock, (startScreenBlock + middleScreenBlockPosition) / 2, middleScreenBlockPosition);
         displayBinaryTree(root->right, y, middleScreenBlockPosition, (middleScreenBlockPosition + endScreenBlock) / 2, endScreenBlock);
     }
-    void _displayDirectedGraph(DirectedGraph* graph, int startDrawingPoint = 6) {
-        int corner = 0;
-        int cornerStep = 45;
-        setCursorPosition(60, startDrawingPoint);
-        for (int i = 0; i < graph->adjacencyMatricx.size(); i++) {
-            corner = 0;
-            for (int j = i+1; j < graph->adjacencyMatricx.at(i).size(); j++) {
-                drawLineUnderDegree(coord.X, coord.Y, 1, corner, ' ');
-                drawLineUnderDegree(coord.X, coord.Y, 1, corner, '0' + j);
-                drawLineUnderDegree(coord.X, coord.Y, 1, corner, ' ');
-                if (graph->adjacencyMatricx.at(i).at(j) == 1) {
-                    char edgeLineSymbol = _choiceSymbolByCorner(corner);
-                    int lineLength = graph->weightMatrix.at(i).at(j);
-                    lineLength = lineLength % 2 == 0 ? lineLength : lineLength + 1;
-                    drawLineUnderDegree(coord.X, coord.Y, lineLength, corner, edgeLineSymbol);
-                    corner += cornerStep;
-                }
-            }
-        }
+    void _displayDirectedGraph(DirectedGraph* graph) {
+        std::cout << "Матрица смежности" << std::endl;
+        graph->displayAdjacencyMatrix();
+        std::cout << std::endl;
+        std::cout << "Матрица весов" << std::endl;
+        graph->displayWeightMatrix();
     }
-    char _choiceSymbolByCorner(int corner) {
-        switch (corner) {
-            case 0:
-            case 180:
-            case 360:
-                return '-';
-            case 45: 
-            case 225:
-                return '\\';
-            case 90: 
-            case 270:
-                return '|';
-            case 135: 
-            case 315:
-                return '/';
-        }
-    }
+    
 };
 int main()
 {   
-    DirectedGraph* g = new DirectedGraph(3);
+    setlocale(LC_ALL, "");
+    DirectedGraph* g = new DirectedGraph(9);
     DrawWorker* d = new DrawWorker();
     d->displayDirectedGraph(g);
    /* std::vector<int>* v = new std::vector<int>{ 54,50,85,3,10,59,2,82,66,42,9,78,22,57,92 };
