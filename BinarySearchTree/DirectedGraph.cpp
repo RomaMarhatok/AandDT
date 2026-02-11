@@ -113,3 +113,11 @@ int DirectedGraph::_randomIntValue(int min,int max) {
 	return dist(gen);
 }
 
+void DirectedGraph::_dijkstrasAlgorithm(int vertex) {	
+	std::vector<bool> visited = std::vector<bool>(adjacencyMatrix.size());
+	std::vector<int> pathes = std::vector<int>(adjacencyMatrix.size(),-1);
+	std::vector<int> costs = std::vector<int>(adjacencyMatrix.size(), INT_MAX);
+	visited.at(vertex - 1) = true;
+	pathes.at(vertex - 1) = 0;
+
+}
