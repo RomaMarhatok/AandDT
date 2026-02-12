@@ -5,25 +5,27 @@
 #include <iomanip>
 #include <set>
 #include <algorithm>
+#include <map>
+#include <numeric>
+#include <queue>
+#include <iterator>
+#include <utility>
 #ifndef DG
 #define DG
 class DirectedGraph {
+	using d2IntVectorsArray = std::vector<std::vector<int>>;
 public:
-	std::vector<std::vector<int>> adjacencyMatrix;
-	std::vector<std::vector<int>> weightMatrix;
+	d2IntVectorsArray weightMatrix;
 	DirectedGraph(int amountOfEdges);
-	void displayAdjacencyMatrix();
+	DirectedGraph(std::vector<std::vector<int>> weightMatrix);
 	void displayWeightMatrix();
 	void displayAdjacencyVertex(int vertexNumber);
 	void getVerticesThroughWhichYouCanGetToVertexN(int vertexNumber);
-
+	std::vector<std::queue<int>> dijkstrasAlgorithm(int vertex);
 private:
-	template<typename T>
-	void _displayVectorMatrix(const std::vector<std::vector<T>>& arr);
 	int _createEdgeOrNot();
 	int _createWeightForVertex();
 	int _randomIntValue(int min, int max);
 	std::set<int> _getVerticesWichHasEdgesWithVertexN(std::vector<int> edgesOfVertex);
-	void _dijkstrasAlgorithm(int vertex);
 };
 #endif //!DG

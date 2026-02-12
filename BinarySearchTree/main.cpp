@@ -192,9 +192,6 @@ private:
         displayBinaryTree(root->right, y, middleScreenBlockPosition, (middleScreenBlockPosition + endScreenBlock) / 2, endScreenBlock);
     }
     void _displayDirectedGraph(DirectedGraph* graph) {
-        std::cout << "Матрица смежности" << std::endl;
-        graph->displayAdjacencyMatrix();
-        std::cout << std::endl;
         std::cout << "Матрица весов" << std::endl;
         graph->displayWeightMatrix();
     }
@@ -203,10 +200,24 @@ private:
 int main()
 {   
     setlocale(LC_ALL, "");
-    DirectedGraph* g = new DirectedGraph(9);
     DrawWorker* d = new DrawWorker();
-    d->displayDirectedGraph(g);
-   /* std::vector<int>* v = new std::vector<int>{ 54,50,85,3,10,59,2,82,66,42,9,78,22,57,92 };
-    BinarySearchTree* t = new BinarySearchTree(v);
-    d->displayBinaryTree(t->root);*/
+    std::vector<std::vector<int>> wM = {
+        {0,0,0,5,1,0,0,0},
+        {0,0,7,5,0,7,0,0},
+        {3,0,0,0,0,0,1,0},
+        {0,0,0,0,0,0,0,0},
+        {0,0,2,0,0,0,0,5},
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,6,0,0},
+        {0,0,0,0,0,2,0,0}
+    };
+    DirectedGraph* g = new DirectedGraph(wM);
+    std::vector<std::queue<int>> pathes = g->dijkstrasAlgorithm(1);
+    for (std::queue<int> path : pathes) {
+        std::cout << std::endl;
+        while (!path.empty()) {
+            std::cout <<std::setw(3)<<path.front();
+            path.pop();
+        }
+    }
 }
