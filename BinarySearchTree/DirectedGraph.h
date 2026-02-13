@@ -10,6 +10,7 @@
 #include <queue>
 #include <iterator>
 #include <utility>
+#include <stack>
 #ifndef DG
 #define DG
 class DirectedGraph {
@@ -21,7 +22,8 @@ public:
 	void displayWeightMatrix();
 	void displayAdjacencyVertex(int vertexNumber);
 	void getVerticesThroughWhichYouCanGetToVertexN(int vertexNumber);
-	std::vector<std::queue<int>> dijkstrasAlgorithm(int vertex);
+	std::vector<std::stack<int>> dijkstrasAlgorithm(int vertex);
+	void findPathesByLength(int pathLength);
 private:
 	int _createEdgeOrNot();
 	int _createWeightForVertex();

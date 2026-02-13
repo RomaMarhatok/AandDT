@@ -100,7 +100,7 @@ int DirectedGraph::_randomIntValue(int min,int max) {
 }
 
 
-std::vector<std::queue<int>> DirectedGraph::dijkstrasAlgorithm(int vertex) {
+std::vector<std::stack<int>> DirectedGraph::dijkstrasAlgorithm(int vertex) {
 	// dijkstrasAlgorithm
 	// see https://www.cs.usfca.edu/~galles/visualization/Dijkstra.html
 	struct dijkstrasNode {
@@ -139,9 +139,9 @@ std::vector<std::queue<int>> DirectedGraph::dijkstrasAlgorithm(int vertex) {
 		}
 	}
 
-	std::vector<std::queue<int>> pathes;
+	std::vector<std::stack<int>> pathes;
 	for (int i = 0; i < nodes.size(); i++) {
-		std::queue<int> path;
+		std::stack<int> path;
 		int j = i;
 		while (true) {
 			path.push(j);
@@ -151,4 +151,8 @@ std::vector<std::queue<int>> DirectedGraph::dijkstrasAlgorithm(int vertex) {
 		pathes.push_back(path);
 	}
 	return pathes;
+}
+
+void DirectedGraph::findPathesByLength(int pathLength) {
+
 }

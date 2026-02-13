@@ -202,21 +202,21 @@ int main()
     setlocale(LC_ALL, "");
     DrawWorker* d = new DrawWorker();
     std::vector<std::vector<int>> wM = {
-        {0,0,0,5,1,0,0,0},
-        {0,0,7,5,0,7,0,0},
-        {3,0,0,0,0,0,1,0},
+        {0,0,2,5,5,0,0,0},
+        {1,0,2,2,0,3,0,0},
+        {6,0,0,0,3,0,0,0},
         {0,0,0,0,0,0,0,0},
-        {0,0,2,0,0,0,0,5},
-        {0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,6,0,0},
-        {0,0,0,0,0,2,0,0}
+        {0,0,0,0,0,0,5,0},
+        {0,5,0,0,0,0,4,4},
+        {0,0,0,0,6,6,0,6},
+        {0,0,0,0,0,0,0,0}
     };
     DirectedGraph* g = new DirectedGraph(wM);
-    std::vector<std::queue<int>> pathes = g->dijkstrasAlgorithm(1);
-    for (std::queue<int> path : pathes) {
+    std::vector<std::stack<int>> pathes = g->dijkstrasAlgorithm(1);
+    for (std::stack<int> path : pathes) {
         std::cout << std::endl;
         while (!path.empty()) {
-            std::cout <<std::setw(3)<<path.front();
+            std::cout <<std::setw(3)<<path.top();
             path.pop();
         }
     }
