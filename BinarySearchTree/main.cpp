@@ -220,4 +220,6 @@ int main()
             path.pop();
         }
     }
+    std::cout << std::endl;
+    std::cout << g->findPathesByLength(1, 6, 3);
 }

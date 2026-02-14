@@ -23,7 +23,7 @@ public:
 	void displayAdjacencyVertex(int vertexNumber);
 	void getVerticesThroughWhichYouCanGetToVertexN(int vertexNumber);
 	std::vector<std::stack<int>> dijkstrasAlgorithm(int vertex);
-	void findPathesByLength(int pathLength);
+	int findPathesByLength(int startVertex, int endVertex,int pathLength);
 private:
 	int _createEdgeOrNot();
 	int _createWeightForVertex();

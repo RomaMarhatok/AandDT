@@ -153,6 +153,29 @@ std::vector<std::stack<int>> DirectedGraph::dijkstrasAlgorithm(int vertex) {
 	return pathes;
 }
 
-void DirectedGraph::findPathesByLength(int pathLength) {
+std::vector<std::vector<int>> matrixMultiply(std::vector<std::vector<int>> A, std::vector<std::vector<int>> B) {
+	std::vector<std::vector<int>> C = std::vector<std::vector<int>>(A.size(), std::vector<int>(A.at(0).size()));
 
+	for (int i = 0; i < A.size(); i++) {
+		for (int j = 0; j < B.size(); j++) {
+			for (int k = 0; k < A.size(); k++) {
+				C[i][j] += A[i][k] * B[k][j];
+			}
+		}
+	}
+	return C;
+}
+int DirectedGraph::findPathesByLength(int startVertex, int endVertex, int pathLength) {
+	std::vector<std::vector<int>> adjacencyMatrix = std::vector<std::vector<int>>(weightMatrix.size(), std::vector<int>(weightMatrix.at(0).size()));
+	for (int i = 0; i < weightMatrix.size(); i++) {
+		for (int j = 0; j < weightMatrix.at(i).size(); j++) {
+			if (weightMatrix.at(i).at(j) > 0) {
+				adjacencyMatrix.at(i).at(j) = 1;
+			}
+		}
+	}
+	for (int i = 1; i < pathLength; i++) {
+		adjacencyMatrix = matrixMultiply(adjacencyMatrix, adjacencyMatrix);
+	}
+	return adjacencyMatrix.at(startVertex).at(endVertex);
 }
