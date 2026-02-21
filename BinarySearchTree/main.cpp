@@ -106,7 +106,7 @@ public:
     }
     void displayBinaryTree(Node* root, int y = 0, int startScreenBlock = 0, int middleScreenBlockPosition = 60, int endScreenBlock = 120) {
         _displayBinaryTree(root, y, startScreenBlock, middleScreenBlockPosition,endScreenBlock);
-        setCursorPosition(0,20);
+        setCursorPosition(0,30);
     }
     void displayDirectedGraph(DirectedGraph* g) {
         _displayDirectedGraph(g);
@@ -197,10 +197,8 @@ private:
     }
     
 };
-int main()
-{   
-    setlocale(LC_ALL, "");
-    DrawWorker* d = new DrawWorker();
+
+DirectedGraph* preDefinedGraph() {
     std::vector<std::vector<int>> wM = {
         {0,0,2,5,5,0,0,0},
         {1,0,2,2,0,3,0,0},
@@ -211,15 +209,46 @@ int main()
         {0,0,0,0,6,6,0,6},
         {0,0,0,0,0,0,0,0}
     };
-    DirectedGraph* g = new DirectedGraph(wM);
-    std::vector<std::stack<int>> pathes = g->dijkstrasAlgorithm(1);
-    for (std::stack<int> path : pathes) {
-        std::cout << std::endl;
-        while (!path.empty()) {
-            std::cout <<std::setw(3)<<path.top();
-            path.pop();
+    return new DirectedGraph(wM);
+}
+int randomIntValue(int min, int max) {
+    std::mt19937 gen(std::random_device{}());
+    std::uniform_int_distribution<int> dist(min, max);
+    return dist(gen);
+}
+int main()
+{   
+    setlocale(LC_ALL, "");
+    int amountOfNumber = 13;
+    std::vector<int> v = std::vector<int>(amountOfNumber);
+    std::cout << "Введите rand если хотите сгенерировать дерево рандомно:"<<std::endl;
+    std::string mode = "";
+    std::cin >> mode;
+    if (mode == "rand") {
+        for (int i = 0; i < amountOfNumber; i++) {
+            v.at(i) = randomIntValue(1, 100);
         }
     }
-    std::cout << std::endl;
-    std::cout << g->findPathesByLength(1, 6, 3);
+    else {
+        std::cout << "Введите 13 цифр" << std::endl;
+        for (int i = 0; i < amountOfNumber; i++)
+        {
+            int num = 0;
+            std::cin >> num;
+            v.push_back(num);
+        }
+    }
+    
+    system("cls");
+    BinarySearchTree* tree = new BinarySearchTree(&v);
+    DrawWorker* brush = new DrawWorker();
+    brush->displayBinaryTree(tree->root);
+    std::cout << "Прямой обход: "; tree->preorder_traversal(); std::cout << std::endl;
+    std::cout << "Симметричный обход: "; tree->postorder_traversal(); std::cout << std::endl;
+    std::cout << "Обратный обход: "; tree->inorder_traversal(); std::cout << std::endl;
+    std::cout << "Персональное задание: " << std::endl;
+    std::cout << "Реализуйте функцию, вычисляющую произведение значений всех узлов дерева." << std::endl;
+    tree->calculateProductElementsOfTree();
+
+
 }

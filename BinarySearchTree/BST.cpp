@@ -48,7 +48,7 @@ void BinarySearchTree::deleteNode(int value) {
 void BinarySearchTree::calculateProductElementsOfTree() {
     float result = 1;
     _calculateProductElementsOfTree(this->root, &result);
-    std::cout << result;
+    std::cout<<"Произвдение всех элементов дерева: " << result;
 }
 
 void BinarySearchTree::_postorder_traversal(Node* root) {
@@ -57,14 +57,14 @@ void BinarySearchTree::_postorder_traversal(Node* root) {
     if (!root)return;
     _postorder_traversal(root->left);
     _postorder_traversal(root->right);
-    std::cout << root->value << "\n";
+    std::cout << root->value << " ";
 }
 
 void BinarySearchTree::_preorder_traversal(Node* root) {
     // see https://neon1ks.github.io/c/22/2208.htm
     // Прямой
     if (!root)return;
-    std::cout << root->value << "\n";
+    std::cout << root->value << " ";
     _preorder_traversal(root->left);
     _preorder_traversal(root->right);
 
@@ -75,7 +75,7 @@ void BinarySearchTree::_inorder_traversal(Node* root) {
     // Обратный
     if (!root)return;
     _inorder_traversal(root->left);
-    std::cout << root->value << "\n";
+    std::cout << root->value << " ";
     _inorder_traversal(root->right);
 }
 
