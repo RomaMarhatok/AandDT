@@ -37,33 +37,41 @@ void DirectedGraph::displayAdjacencyVertex(int vertexNumber) {
 }
 void DirectedGraph::getVerticesThroughWhichYouCanGetToVertexN(int vertexNumber) {
 	/*
-	* This method will display veretices use the recurstion method _getVerticesWichHasEdgesWithVertexN
+	* This method will display veretices use the queue method _getVerticesWichHasEdgesWithVertexN
 	*/
-	std::set<int> vertexes = _getVerticesWichHasEdgesWithVertexN(weightMatrix.at(vertexNumber));
-	for (int vertex : vertexes) {
-		std::cout << vertex << " ";
+	std::set<int> _initVertexes;
+	for (int edge : weightMatrix.at(vertexNumber)) {
+		_initVertexes.insert(edge);
 	}
-}
-std::set<int> DirectedGraph::_getVerticesWichHasEdgesWithVertexN(std::vector<int> edgesOfVertex) {
-	/*
-	* This method use recurstion for funding each node;
-	* which has edge with the vertex given in getVerticesThroughWhichYouCanGetToVertexN;
-	*/
-	std::set<int> vertexes = std::set<int>();
-	for (int i = 0; i < edgesOfVertex.size(); i++) {
-		if (edgesOfVertex.at(i) != 0) {
-			vertexes.insert(i);
-			std::set<int> newVertexes = _getVerticesWichHasEdgesWithVertexN(weightMatrix.at(i));
-			std::set_union(
-				edgesOfVertex.begin(),
-				edgesOfVertex.end(),
-				newVertexes.begin(),
-				newVertexes.end(),
-				std::inserter(vertexes, vertexes.begin())
-			);
+	std::vector<bool> vertexes = _getVerticesWichHasEdgesWithVertexN(vertexNumber);
+	for (int i = 0; i < vertexes.size(); i++)
+	{
+		if (vertexes.at(i) && i!=vertexNumber) {
+			std::cout << i << " ";
 		}
 	}
-	return vertexes;
+}
+std::vector<bool> DirectedGraph::_getVerticesWichHasEdgesWithVertexN(int vertexNumber) {
+	/*
+	* This method use qeue for funding each node;
+	* which has edge with the vertex given in getVerticesThroughWhichYouCanGetToVertexN;
+	*/
+	std::vector<bool> visited = std::vector<bool>(weightMatrix.size(), false);
+	visited.at(vertexNumber) = true;
+	std::queue<int> q;
+	q.push(vertexNumber);
+	while (!q.empty()) {
+		int vertex = q.front();
+		q.pop();
+		for (int i = 0; i < weightMatrix.at(vertex).size();i++) {
+			if (weightMatrix.at(vertex).at(i) != 0 and !visited.at(i)) {
+				visited.at(i) = true;
+				q.push(i);
+			}
+		}
+	}
+	return visited;
+	
 }
 
 void DirectedGraph::displayWeightMatrix() {
@@ -74,7 +82,7 @@ void DirectedGraph::displayWeightMatrix() {
 	std::cout << std::endl;
 	std::cout << std::endl;
 
-	int i = 1;
+	int i = 0;
 	for (const auto& row : weightMatrix) {
 		std::cout << std::setw(2) << i;
 		for (const auto& val : row) {
@@ -153,7 +161,7 @@ std::vector<std::stack<int>> DirectedGraph::dijkstrasAlgorithm(int vertex) {
 	return pathes;
 }
 
-std::vector<std::vector<int>> matrixMultiply(std::vector<std::vector<int>> A, std::vector<std::vector<int>> B) {
+static std::vector<std::vector<int>> matrixMultiply(std::vector<std::vector<int>> A, std::vector<std::vector<int>> B) {
 	std::vector<std::vector<int>> C = std::vector<std::vector<int>>(A.size(), std::vector<int>(A.at(0).size()));
 
 	for (int i = 0; i < A.size(); i++) {

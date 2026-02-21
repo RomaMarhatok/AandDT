@@ -198,7 +198,7 @@ private:
     
 };
 
-DirectedGraph* preDefinedGraph() {
+static DirectedGraph* preDefinedGraph() {
     std::vector<std::vector<int>> wM = {
         {0,0,2,5,5,0,0,0},
         {1,0,2,2,0,3,0,0},
@@ -211,17 +211,15 @@ DirectedGraph* preDefinedGraph() {
     };
     return new DirectedGraph(wM);
 }
-int randomIntValue(int min, int max) {
+static int randomIntValue(int min, int max) {
     std::mt19937 gen(std::random_device{}());
     std::uniform_int_distribution<int> dist(min, max);
     return dist(gen);
 }
-int main()
-{   
-    setlocale(LC_ALL, "");
+static void BinaryTreeLab() {
     int amountOfNumber = 13;
     std::vector<int> v = std::vector<int>(amountOfNumber);
-    std::cout << "Введите rand если хотите сгенерировать дерево рандомно:"<<std::endl;
+    std::cout << "Введите rand если хотите сгенерировать дерево рандомно:" << std::endl;
     std::string mode = "";
     std::cin >> mode;
     if (mode == "rand") {
@@ -238,7 +236,7 @@ int main()
             v.push_back(num);
         }
     }
-    
+
     system("cls");
     BinarySearchTree* tree = new BinarySearchTree(&v);
     DrawWorker* brush = new DrawWorker();
@@ -249,6 +247,50 @@ int main()
     std::cout << "Персональное задание: " << std::endl;
     std::cout << "Реализуйте функцию, вычисляющую произведение значений всех узлов дерева." << std::endl;
     tree->calculateProductElementsOfTree();
+}
+static void DirectedGraphLab() {
+    int amountOfEdges = 9;
+    std::cout << "Введите количестов вершин:"<<std::endl;
+    std::cin >> amountOfEdges;
+    DirectedGraph* graph = new DirectedGraph(amountOfEdges);
+    graph->displayWeightMatrix();
+    std::cout << std::endl;
+    std::cout << "Введите вершину с которой хотите найти смежную:" << std::endl;
+    int edge = 0;
+    std::cin >> edge;
+    graph->displayAdjacencyVertex(edge);
+    std::cout << std::endl;
+    std::cout << "Введите вершину для которой нужно определить список вершин, из которых можно попасть в вершину:" << std::endl;
+    std::cin >> edge;
+    graph->getVerticesThroughWhichYouCanGetToVertexN(edge);
+    std::cout << std::endl;
+    std::cout << "Персональное задание: " << std::endl;
+    std::cout << "Определить кратчайшие пути от вершины-источника до всех вершин орграфа на основе алгоритма Дейкстры." << std::endl;
+    std::cout << "Введите вершину для алгоритма Дейкстры:" << std::endl;
+    std::cin >> edge;
+    std::vector<std::stack<int>> pathes = graph->dijkstrasAlgorithm(edge);
+    for (std::stack<int> path : pathes) {
+        while (!path.empty()) {
+            std::cout << path.top() << " ";
+            path.pop();
+        }
+        std::cout << std:: endl;
 
-
+    }
+    std::cout << "Найти количество путей заданной длины между двумя вершинами." << std::endl;
+    int pathLength = 1;
+    std::cout << "Введите длину пути: " << std::endl;
+    std::cin >> pathLength;
+    int startEdge = 0;
+    std::cout << "Введите стартовую вершину: " << std::endl;
+    std::cin >> startEdge;
+    int endEdge = 0;
+    std::cout << "Введите конечную вершину: " << std::endl;
+    std::cin >> endEdge;
+    std::cout << "Количество путей от:" << startEdge << " до:"<<endEdge<< " с длинной:"<< pathLength 
+        << " равно:" << graph->findPathesByLength(startEdge, endEdge, pathLength);
+}
+int main()
+{   
+    setlocale(LC_ALL, "");
 }

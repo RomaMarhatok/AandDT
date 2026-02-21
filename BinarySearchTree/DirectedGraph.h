@@ -28,6 +28,6 @@ private:
 	int _createEdgeOrNot();
 	int _createWeightForVertex();
 	int _randomIntValue(int min, int max);
-	std::set<int> _getVerticesWichHasEdgesWithVertexN(std::vector<int> edgesOfVertex);
+	std::vector<bool> _getVerticesWichHasEdgesWithVertexN(int vertexNumber);
 };
 #endif //!DG
