@@ -39,10 +39,6 @@ void DirectedGraph::getVerticesThroughWhichYouCanGetToVertexN(int vertexNumber) 
 	/*
 	* This method will display veretices use the queue method _getVerticesWichHasEdgesWithVertexN
 	*/
-	std::set<int> _initVertexes;
-	for (int edge : weightMatrix.at(vertexNumber)) {
-		_initVertexes.insert(edge);
-	}
 	std::vector<bool> vertexes = _getVerticesWichHasEdgesWithVertexN(vertexNumber);
 	for (int i = 0; i < vertexes.size(); i++)
 	{
