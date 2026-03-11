@@ -4,7 +4,10 @@ void Node::display()const { std::cout << value; }
 
 Node::Node(int v) { value = v; }
 
-BinarySearchTree::BinarySearchTree(std::vector<int>* values) { this->createTree(values); }
+BinarySearchTree::BinarySearchTree(std::vector<int>* values,bool is_stitched) { 
+    this->createTree(values); 
+    this->is_stitched = is_stitched;
+}
 void BinarySearchTree::createTree(std::vector<int>* values) {
     this->root = new Node((*values)[0]);
     int i = 1;
@@ -13,7 +16,7 @@ void BinarySearchTree::createTree(std::vector<int>* values) {
         this->_insert(this->root, new Node((*values)[i]));
         i++;
     }
-    this->root = root;
+   
 }
 BinarySearchTree::~BinarySearchTree() {
     _deleteTree(root);
@@ -53,7 +56,7 @@ void BinarySearchTree::calculateProductElementsOfTree() {
 
 void BinarySearchTree::_postorder_traversal(Node* root) {
     // see https://neon1ks.github.io/c/22/2208.htm
-    // Симметричный
+    // Обратный
     if (!root)return;
     _postorder_traversal(root->left);
     _postorder_traversal(root->right);
@@ -72,7 +75,7 @@ void BinarySearchTree::_preorder_traversal(Node* root) {
 
 void BinarySearchTree::_inorder_traversal(Node* root) {
     // see https://neon1ks.github.io/c/22/2208.htm
-    // Обратный
+    // Симметричный
     if (!root)return;
     _inorder_traversal(root->left);
     std::cout << root->value << " ";
@@ -91,6 +94,7 @@ void BinarySearchTree::_insert(Node* node, Node* insertedNode) {
         if (node->value > insertedNode->value) {
             if (!node->left) {
                 node->left = insertedNode;
+                insertedNode->parent = node;
                 if (!node->right)height++;
             }
             else {
@@ -100,6 +104,7 @@ void BinarySearchTree::_insert(Node* node, Node* insertedNode) {
         else if (node->value < insertedNode->value) {
             if (!node->right) {
                 node->right = insertedNode;
+                insertedNode->parent = node;
                 if (!node->left)height++;
             }
             else {
@@ -109,7 +114,32 @@ void BinarySearchTree::_insert(Node* node, Node* insertedNode) {
     }
 
 }
-
+//Node* BinarySearchTree::_stitched(Node* node) {
+//    if (!node)return;
+//    // stritched to head
+//    if (_leftStitched(node->left) == nullptr) {
+//        node->left = root;
+//    }
+//
+//
+//}
+//Node* BinarySearchTree::_leftStitched(Node* node) {
+//    if (!node)return;
+//    // stritched to head
+//    if(node->right)
+//    if (_leftStitched(node->left) == nullptr) {
+//        node->left = root;
+//    }
+//    
+//
+//}
+//Node* BinarySearchTree::_rightStitched(Node* node) {
+//    if (!node)return;
+//    // stritched to head
+//    if (_leftStitched(node->right) == nullptr) {
+//        node->right = root;
+//    }
+//}
 void BinarySearchTree::_delete_node_without_children(Node* parentNode, Node* deletedNode) {
     /*
     *  proccess node without children:

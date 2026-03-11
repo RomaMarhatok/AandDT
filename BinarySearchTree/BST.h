@@ -10,7 +10,7 @@ public:
     int value;
     Node* left = nullptr;
     Node* right = nullptr;
-
+    Node* parent = nullptr;
     void display() const;
     Node(int v);
 };
@@ -22,8 +22,8 @@ class BinarySearchTree {
 public:
     Node* root{};
     int height = 1;
-
-    BinarySearchTree(std::vector<int>* values);
+    bool is_stitched;
+    BinarySearchTree(std::vector<int>* values, bool is_stitched = false);
     void createTree(std::vector<int>* values);
     void insertNode(int value);
     void preorder_traversal();
@@ -48,6 +48,9 @@ private:
     Node* _findParentNodeByValue(Node* node, int childValue);
     int _findMinValueInTree(Node* node, int minValue = INT_MAX);
     void _calculateProductElementsOfTree(Node* root, float* product);
+    Node* _stitched(Node* node);
+    Node* _leftStitched(Node* node);
+    Node* _rightStitched(Node* node);
 };
 #endif // !BSTTree
 

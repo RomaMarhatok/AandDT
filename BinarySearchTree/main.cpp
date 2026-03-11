@@ -242,8 +242,8 @@ static void BinaryTreeLab() {
     DrawWorker* brush = new DrawWorker();
     brush->displayBinaryTree(tree->root);
     std::cout << "Прямой обход: "; tree->preorder_traversal(); std::cout << std::endl;
-    std::cout << "Симметричный обход: "; tree->postorder_traversal(); std::cout << std::endl;
-    std::cout << "Обратный обход: "; tree->inorder_traversal(); std::cout << std::endl;
+    std::cout << "Обратный обход: "; tree->postorder_traversal(); std::cout << std::endl;
+    std::cout << "Симметричный обход: "; tree->inorder_traversal(); std::cout << std::endl;
     std::cout << "Персональное задание: " << std::endl;
     std::cout << "Реализуйте функцию, вычисляющую произведение значений всех узлов дерева." << std::endl;
     tree->calculateProductElementsOfTree();
@@ -293,4 +293,5 @@ static void DirectedGraphLab() {
 int main()
 {   
     setlocale(LC_ALL, "");
+    BinaryTreeLab();
 }
