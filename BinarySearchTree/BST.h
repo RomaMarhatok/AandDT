@@ -11,6 +11,10 @@ public:
     Node* left = nullptr;
     Node* right = nullptr;
     Node* parent = nullptr;
+    Node* left_threaded_node = nullptr;
+    Node* right_threaded_node = nullptr;
+    bool left_is_threaded = false;
+    bool right_is_threaded = false;
     void display() const;
     Node(int v);
 };
@@ -22,8 +26,7 @@ class BinarySearchTree {
 public:
     Node* root{};
     int height = 1;
-    bool is_stitched;
-    BinarySearchTree(std::vector<int>* values, bool is_stitched = false);
+    BinarySearchTree(std::vector<int>* values);
     void createTree(std::vector<int>* values);
     void insertNode(int value);
     void preorder_traversal();
@@ -33,7 +36,7 @@ public:
     void deleteNode(int value);
     void calculateProductElementsOfTree();
     ~BinarySearchTree();
-private:
+protected:
     void _postorder_traversal(Node* root);
     void _preorder_traversal(Node* root);
     void _inorder_traversal(Node* root);
@@ -48,9 +51,25 @@ private:
     Node* _findParentNodeByValue(Node* node, int childValue);
     int _findMinValueInTree(Node* node, int minValue = INT_MAX);
     void _calculateProductElementsOfTree(Node* root, float* product);
-    Node* _stitched(Node* node);
-    Node* _leftStitched(Node* node);
-    Node* _rightStitched(Node* node);
 };
 #endif // !BSTTree
+
+#ifndef  StitchedBinaryThree
+#define SBST
+class ThreadedBinarySearchTree :public BinarySearchTree {
+public:
+    using BinarySearchTree::BinarySearchTree;
+    void flash_tree();
+    void inorder_traversal();
+private:
+    void _thread_tree();
+    void _set_node_thread_links(Node* node);
+    void _thread_left_subtree(Node*current);
+    void _thread_right_subtree(Node*node);
+    void _inorder_traversal(Node*node);
+    Node* _find_the_nearest_node(Node* node);
+
+};
+#endif //  StitchedBinaryThree
+
 

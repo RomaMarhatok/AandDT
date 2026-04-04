@@ -290,8 +290,40 @@ static void DirectedGraphLab() {
     std::cout << "Количество путей от:" << startEdge << " до:"<<endEdge<< " с длинной:"<< pathLength 
         << " равно:" << graph->findPathesByLength(startEdge, endEdge, pathLength);
 }
+static void ThreadedBinaryThreeLab() {
+    int amountOfNumber = 13;
+    std::vector<int> v = std::vector<int>(amountOfNumber);
+    std::cout << "Введите rand если хотите сгенерировать дерево рандомно:" << std::endl;
+    std::string mode = "";
+    std::cin >> mode;
+    if (mode == "rand") {
+        for (int i = 0; i < amountOfNumber; i++) {
+            v.at(i) = randomIntValue(1, 100);
+        }
+    }
+    else {
+        std::cout << "Введите 13 цифр" << std::endl;
+        for (int i = 0; i < amountOfNumber; i++)
+        {
+            int num = 0;
+            std::cin >> num;
+            v.push_back(num);
+        }
+    }
+
+    system("cls");
+    ThreadedBinarySearchTree* tree = new ThreadedBinarySearchTree(&v);
+    DrawWorker* brush = new DrawWorker();
+    brush->displayBinaryTree(tree->root);
+    std::cout << "Прямой обход: "; tree->preorder_traversal(); std::cout << std::endl;
+    std::cout << "Обратный обход: "; tree->postorder_traversal(); std::cout << std::endl;
+    std::cout << "Симметричный обход: "; tree->inorder_traversal(); std::cout << std::endl;
+    //std::cout << "Персональное задание: " << std::endl;
+    //std::cout << "Реализуйте функцию, вычисляющую произведение значений всех узлов дерева." << std::endl;
+    //tree->calculateProductElementsOfTree();
+}
 int main()
 {   
     setlocale(LC_ALL, "");
-    BinaryTreeLab();
+    ThreadedBinaryThreeLab();
 }

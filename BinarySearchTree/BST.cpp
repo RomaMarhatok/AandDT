@@ -4,9 +4,8 @@ void Node::display()const { std::cout << value; }
 
 Node::Node(int v) { value = v; }
 
-BinarySearchTree::BinarySearchTree(std::vector<int>* values,bool is_stitched) { 
+BinarySearchTree::BinarySearchTree(std::vector<int>* values) { 
     this->createTree(values); 
-    this->is_stitched = is_stitched;
 }
 void BinarySearchTree::createTree(std::vector<int>* values) {
     this->root = new Node((*values)[0]);
@@ -114,32 +113,6 @@ void BinarySearchTree::_insert(Node* node, Node* insertedNode) {
     }
 
 }
-//Node* BinarySearchTree::_stitched(Node* node) {
-//    if (!node)return;
-//    // stritched to head
-//    if (_leftStitched(node->left) == nullptr) {
-//        node->left = root;
-//    }
-//
-//
-//}
-//Node* BinarySearchTree::_leftStitched(Node* node) {
-//    if (!node)return;
-//    // stritched to head
-//    if(node->right)
-//    if (_leftStitched(node->left) == nullptr) {
-//        node->left = root;
-//    }
-//    
-//
-//}
-//Node* BinarySearchTree::_rightStitched(Node* node) {
-//    if (!node)return;
-//    // stritched to head
-//    if (_leftStitched(node->right) == nullptr) {
-//        node->right = root;
-//    }
-//}
 void BinarySearchTree::_delete_node_without_children(Node* parentNode, Node* deletedNode) {
     /*
     *  proccess node without children:
@@ -292,4 +265,64 @@ void BinarySearchTree::_deleteTree(Node*node) {
     _deleteTree(node->left);
     _deleteTree(node->right);
     delete node;
+}
+
+void ThreadedBinarySearchTree::flash_tree() {
+    _set_node_thread_links(this->root);
+}
+
+
+void ThreadedBinarySearchTree::_set_node_thread_links(Node* node) {
+    // setup thread links for threading tree
+    if (!node)return;
+    if (node->left==nullptr) {
+        node->left_is_threaded = true;
+    }
+    if (node->right == nullptr) {
+        node->right_is_threaded = true;
+    }
+    _set_node_thread_links(node->left);
+    _set_node_thread_links(node->right);
+}
+Node* ThreadedBinarySearchTree::_find_the_nearest_node(Node* node) {
+    Node* curr = node->parent;
+    while (curr->value < curr->parent->value) {
+        curr = curr->parent;
+    }
+    return curr;
+}
+
+
+void ThreadedBinarySearchTree::_thread_tree()
+{
+    _thread_left_subtree(this->root->left);
+    _thread_right_subtree(this->root->right);
+}
+
+void ThreadedBinarySearchTree::_thread_left_subtree(Node* current) {
+    if (!current)return;
+    if (current == current->parent->right) {
+        current->right_threaded_node =  _find_the_nearest_node(current);
+    }
+    _thread_left_subtree(current->left);
+    _thread_left_subtree(current->right);
+}
+void ThreadedBinarySearchTree::_thread_right_subtree(Node* current) {
+    if (!current)return;
+    if (current == current->parent->left) {
+        current->left_threaded_node = _find_the_nearest_node(current);
+    }
+    _thread_left_subtree(current->left);
+    _thread_left_subtree(current->right);
+}
+
+void ThreadedBinarySearchTree::inorder_traversal() {
+    _inorder_traversal(this->root);
+}
+void ThreadedBinarySearchTree::_inorder_traversal(Node* node)
+{
+    if (!root)return;
+    _inorder_traversal(root->left);
+    std::cout << root->value << " ";
+    _inorder_traversal(root->right);
 }
