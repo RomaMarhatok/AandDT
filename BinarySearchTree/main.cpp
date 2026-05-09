@@ -216,6 +216,7 @@ static int randomIntValue(int min, int max) {
     std::uniform_int_distribution<int> dist(min, max);
     return dist(gen);
 }
+// 1 лаба
 static void BinaryTreeLab() {
     int amountOfNumber = 13;
     std::vector<int> v = std::vector<int>(amountOfNumber);
@@ -244,10 +245,28 @@ static void BinaryTreeLab() {
     std::cout << "Прямой обход: "; tree->preorder_traversal(); std::cout << std::endl;
     std::cout << "Обратный обход: "; tree->postorder_traversal(); std::cout << std::endl;
     std::cout << "Симметричный обход: "; tree->inorder_traversal(); std::cout << std::endl;
+    int proccesedNode = -1;
+    std::cout << "Введите эелемнт для поискa:"; std::cin >> proccesedNode; 
+    std::cout << "\n";
+    tree->search(proccesedNode);
+    std::cout << "\n";
+    std::cout << "Введите элемент для вставки:"; std::cin >> proccesedNode;
+    std::cout << "\n";
+    tree->insertNode(proccesedNode);
+    brush->displayBinaryTree(tree->root,40);
+    brush->setCursorPosition(0, 70);
+    std::cout << "\n";
+    std::cout << "Введите эелемнт для удаления:"; std::cin >> proccesedNode;
+    std::cout << "\n";
+    tree->deleteNode(proccesedNode);
+    brush->displayBinaryTree(tree->root,75);
+    brush->setCursorPosition(0, 90);
+    std::cout << "\n";
     std::cout << "Персональное задание: " << std::endl;
     std::cout << "Реализуйте функцию, вычисляющую произведение значений всех узлов дерева." << std::endl;
     tree->calculateProductElementsOfTree();
 }
+// 2 лаба
 static void DirectedGraphLab() {
     int amountOfEdges = 9;
     std::cout << "Введите количестов вершин:"<<std::endl;
@@ -290,6 +309,7 @@ static void DirectedGraphLab() {
     std::cout << "Количество путей от:" << startEdge << " до:"<<endEdge<< " с длинной:"<< pathLength 
         << " равно:" << graph->findPathesByLength(startEdge, endEdge, pathLength);
 }
+// 1 кр
 static void ThreadedBinaryThreeLab() {
     int amountOfNumber = 13;
     std::vector<int> v = std::vector<int>(amountOfNumber);
@@ -318,12 +338,12 @@ static void ThreadedBinaryThreeLab() {
     std::cout << "Прямой обход: "; tree->preorder_traversal(); std::cout << std::endl;
     std::cout << "Обратный обход: "; tree->postorder_traversal(); std::cout << std::endl;
     std::cout << "Симметричный обход: "; tree->inorder_traversal(); std::cout << std::endl;
-    //std::cout << "Персональное задание: " << std::endl;
-    //std::cout << "Реализуйте функцию, вычисляющую произведение значений всех узлов дерева." << std::endl;
-    //tree->calculateProductElementsOfTree();
+    std::cout << "Персональное задание: " << std::endl;
+    std::cout << "Реализуйте функцию, вычисляющую произведение значений всех узлов дерева." << std::endl;
+    tree->calculateProductElementsOfTree();
 }
 int main()
 {   
     setlocale(LC_ALL, "");
-    ThreadedBinaryThreeLab();
+    BinaryTreeLab();
 }

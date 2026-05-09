@@ -42,15 +42,13 @@ protected:
     void _inorder_traversal(Node* root);
     bool _search(Node* root, int value);
     void _insert(Node* node, Node* insertedNode);
-
-    void _delete_node_without_children(Node* parentNode, Node* deletedNode);
-    void _delete_node_with_one_child(Node* parentNode);
-    void _delete_node_with_two_children(Node* deletedNode);
-    void _delete(Node* node, int value);
+    Node* _delete(Node* node, int value);
+    Node* _get_successor(Node* node);
     void _deleteTree(Node*root);
     Node* _findParentNodeByValue(Node* node, int childValue);
     int _findMinValueInTree(Node* node, int minValue = INT_MAX);
     void _calculateProductElementsOfTree(Node* root, float* product);
+
 };
 #endif // !BSTTree
 
