@@ -207,14 +207,14 @@ void ThreadedBinarySearchTree::_set_node_thread_links(Node* node) {
 }
 Node* ThreadedBinarySearchTree::_find_the_nearest_node(Node* node) {
     Node* curr = node->parent;
-    while (curr->value < curr->parent->value) {
+    while (curr->parent && curr->value < curr->parent->value) {
         curr = curr->parent;
     }
     return curr;
 }
 
 
-void ThreadedBinarySearchTree::_thread_tree()
+void ThreadedBinarySearchTree::thread_tree()
 {
     _thread_left_subtree(this->root->left);
     _thread_right_subtree(this->root->right);
@@ -235,15 +235,4 @@ void ThreadedBinarySearchTree::_thread_right_subtree(Node* current) {
     }
     _thread_left_subtree(current->left);
     _thread_left_subtree(current->right);
-}
-
-void ThreadedBinarySearchTree::inorder_traversal() {
-    _inorder_traversal(this->root);
-}
-void ThreadedBinarySearchTree::_inorder_traversal(Node* node)
-{
-    if (!root)return;
-    _inorder_traversal(root->left);
-    std::cout << root->value << " ";
-    _inorder_traversal(root->right);
 }

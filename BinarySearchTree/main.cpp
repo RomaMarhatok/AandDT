@@ -333,6 +333,7 @@ static void ThreadedBinaryThreeLab() {
 
     system("cls");
     ThreadedBinarySearchTree* tree = new ThreadedBinarySearchTree(&v);
+    tree->thread_tree();
     DrawWorker* brush = new DrawWorker();
     brush->displayBinaryTree(tree->root);
     std::cout << "Прямой обход: "; tree->preorder_traversal(); std::cout << std::endl;
@@ -345,5 +346,5 @@ static void ThreadedBinaryThreeLab() {
 int main()
 {   
     setlocale(LC_ALL, "");
-    BinaryTreeLab();
+    ThreadedBinaryThreeLab();
 }

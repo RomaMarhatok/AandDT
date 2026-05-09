@@ -58,13 +58,11 @@ class ThreadedBinarySearchTree :public BinarySearchTree {
 public:
     using BinarySearchTree::BinarySearchTree;
     void flash_tree();
-    void inorder_traversal();
+    void thread_tree();
 private:
-    void _thread_tree();
     void _set_node_thread_links(Node* node);
     void _thread_left_subtree(Node*current);
     void _thread_right_subtree(Node*node);
-    void _inorder_traversal(Node*node);
     Node* _find_the_nearest_node(Node* node);
 
 };
