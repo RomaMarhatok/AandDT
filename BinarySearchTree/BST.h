@@ -11,8 +11,6 @@ public:
     Node* left = nullptr;
     Node* right = nullptr;
     Node* parent = nullptr;
-    Node* left_threaded_node = nullptr;
-    Node* right_threaded_node = nullptr;
     bool left_is_threaded = false;
     bool right_is_threaded = false;
     void display() const;
@@ -57,14 +55,10 @@ protected:
 class ThreadedBinarySearchTree :public BinarySearchTree {
 public:
     using BinarySearchTree::BinarySearchTree;
-    void flash_tree();
-    void thread_tree();
-private:
-    void _set_node_thread_links(Node* node);
-    void _thread_left_subtree(Node*current);
-    void _thread_right_subtree(Node*node);
-    Node* _find_the_nearest_node(Node* node);
-
+    Node* search(int value);
+protected:
+    void _insert(Node* root, Node* inserted_node);
+    void _inorder_traversal(Node* root);
 };
 #endif //  StitchedBinaryThree
 

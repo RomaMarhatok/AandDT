@@ -188,51 +188,140 @@ void BinarySearchTree::_deleteTree(Node*node) {
     delete node;
 }
 
-void ThreadedBinarySearchTree::flash_tree() {
-    _set_node_thread_links(this->root);
+void ThreadedBinarySearchTree::_insert(Node* root,Node* inserted_node) {
+    Node* current = root;
+    while (true) {
+        // Идем влево
+        if (inserted_node->value < current->value) {
+            if (!current->left_is_threaded) {
+                current = current->left;
+            }
+            else {
+                // Настраиваем связи для нового узла
+                inserted_node->left = current->left;
+                inserted_node->right = current;
+
+                // Переключаем указатель родителя
+                current->left = inserted_node;
+                current->right_is_threaded = false;
+                break;
+            }
+        }
+        // Идем вправо
+        else {
+            if (!current->right_is_threaded) {
+                current = current->right;
+            }
+            else {
+                // Настраиваем связи для нового узла
+                inserted_node->right = current->right;
+                inserted_node->left = current;
+
+                // Переключаем указатель родителя
+                current->right = inserted_node;
+                current->right_is_threaded = false;
+                break;
+            }
+        }
+    }
+}
+Node* leftmost(Node* node) {
+    if (node == nullptr) return nullptr;
+    while (!node->left_is_threaded) {
+        node = node->left;
+    }
+    return node;
+}
+void ThreadedBinarySearchTree::_inorder_traversal(Node* node) {
+    Node* current = leftmost(this->root);
+    while (current != nullptr) {
+        std::cout << current->value << " ";
+
+        // Если есть прошивка справа, сразу переходим к последователю
+        if (current->right_is_threaded) {
+            current = current->right;
+        }
+        // Иначе идем в правое поддерево и ищем там самый левый узел
+        else {
+            while (!node->left_is_threaded) {
+                node = node->left;
+            }
+            current = leftmost(current->right);
+        }
+    }
+    std::cout << std::endl;
 }
 
+Node* ThreadedBinarySearchTree::search(int value) {
+    Node* current = this->root;
 
-void ThreadedBinarySearchTree::_set_node_thread_links(Node* node) {
-    // setup thread links for threading tree
-    if (!node)return;
-    if (node->left==nullptr) {
-        node->left_is_threaded = true;
+    while (current != nullptr) {
+        // Элемент найден
+        if (value == current->value) {
+            return current;
+        }
+        // Ищем в левом поддереве
+        if (value < current->value) {
+            if (current->left_is_threaded) {
+                break; // Достигли листа/прошивки, элемента нет
+            }
+            current = current->left;
+        }
+        // Ищем в правом поддереве
+        else {
+            if (current->right_is_threaded) {
+                break; // Достигли листа/прошивки, элемента нет
+            }
+            current = current->right;
+        }
     }
-    if (node->right == nullptr) {
-        node->right_is_threaded = true;
-    }
-    _set_node_thread_links(node->left);
-    _set_node_thread_links(node->right);
+    return nullptr; // Элемент не найден
 }
-Node* ThreadedBinarySearchTree::_find_the_nearest_node(Node* node) {
-    Node* curr = node->parent;
-    while (curr->parent && curr->value < curr->parent->value) {
-        curr = curr->parent;
-    }
-    return curr;
-}
-
-
-void ThreadedBinarySearchTree::thread_tree()
-{
-    _thread_left_subtree(this->root->left);
-    _thread_right_subtree(this->root->right);
-}
-
-void ThreadedBinarySearchTree::_thread_left_subtree(Node* current) {
-    if (!current)return;
-    if (current == current->parent->right) {
-        current->right_threaded_node =  _find_the_nearest_node(current);
-    }
-    _thread_left_subtree(current->left);
-    _thread_left_subtree(current->right);
-}
-void ThreadedBinarySearchTree::_thread_right_subtree(Node* current) {
-    if (!current)return;
-    if (current == current->parent->left) {
-        current->left_threaded_node = _find_the_nearest_node(current);
-    }
-    _thread_left_subtree(current->left);
-    _thread_left_subtree(current->right);
-}
+//void ThreadedBinarySearchTree::flash_tree() {
+//    _set_node_thread_links(this->root);
+//}
+//
+//
+//void ThreadedBinarySearchTree::_set_node_thread_links(Node* node) {
+//    // setup thread links for threading tree
+//    if (!node)return;
+//    if (node->left==nullptr) {
+//        node->left_is_threaded = true;
+//    }
+//    if (node->right == nullptr) {
+//        node->right_is_threaded = true;
+//    }
+//    _set_node_thread_links(node->left);
+//    _set_node_thread_links(node->right);
+//}
+//Node* ThreadedBinarySearchTree::_find_the_nearest_node(Node* node) {
+//    Node* curr = node->parent;
+//    while (curr->parent && curr->value < curr->parent->value) {
+//        curr = curr->parent;
+//    }
+//    return curr;
+//}
+//
+//
+//void ThreadedBinarySearchTree::thread_tree()
+//{
+//    _thread_left_subtree(this->root->left);
+//    _thread_right_subtree(this->root->right);
+//}
+//
+//void ThreadedBinarySearchTree::_thread_left_subtree(Node* current) {
+//    if (!current)return;
+//    if (current == current->parent->right) {
+//        current->right_threaded_node =  _find_the_nearest_node(current);
+//    }
+//    _thread_left_subtree(current->left);
+//    _thread_left_subtree(current->right);
+//}
+//void ThreadedBinarySearchTree::_thread_right_subtree(Node* current) {
+//    if (!current)return;
+//    if (current == current->parent->left) {
+//        current->left_threaded_node = _find_the_nearest_node(current);
+//    }
+//    _thread_left_subtree(current->left);
+//    _thread_left_subtree(current->right);
+//}

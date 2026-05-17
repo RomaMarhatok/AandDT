@@ -333,12 +333,22 @@ static void ThreadedBinaryThreeLab() {
 
     system("cls");
     ThreadedBinarySearchTree* tree = new ThreadedBinarySearchTree(&v);
-    tree->thread_tree();
     DrawWorker* brush = new DrawWorker();
     brush->displayBinaryTree(tree->root);
     std::cout << "Прямой обход: "; tree->preorder_traversal(); std::cout << std::endl;
     std::cout << "Обратный обход: "; tree->postorder_traversal(); std::cout << std::endl;
     std::cout << "Симметричный обход: "; tree->inorder_traversal(); std::cout << std::endl;
+    int search_element = 0;
+    std::cout << "Введите элемент для поиска"<<std::endl;
+    std::cin >> search_element;
+    Node*node = tree->search(search_element);
+    if (node) {
+        std::cout << "Элемент найден" << std::endl;
+
+    }
+    else {
+        std::cout << "Элемент не найден" << std::endl;
+    }
     std::cout << "Персональное задание: " << std::endl;
     std::cout << "Реализуйте функцию, вычисляющую произведение значений всех узлов дерева." << std::endl;
     tree->calculateProductElementsOfTree();
